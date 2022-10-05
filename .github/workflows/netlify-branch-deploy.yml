@@ -1,0 +1,78 @@
+name: netlify-branch-deploy
+on: 
+  workflow_call:
+    secrets:
+      NETLIFY_SITE_ID:
+        description: "NETLIFY_SITE_ID"
+        required: true
+      NETLIFY_AUTH_TOKEN:
+        description: "NETLIFY_AUTH_TOKEN"
+        required: true
+      NPM_AUTH_TOKEN:
+        description: "NPM_AUTH_TOKEN"
+        required: true
+      BACKPACK_API_SECRET_TOKEN:
+        description: "BACKPACK_API_SECRET_TOKEN"
+        required: true
+      BACKPACK_SITE_ID:
+        description: "BACKPACK_SITE_ID"
+        required: true
+      CMS_CONTENT_TOKEN:
+        description: "CMS_CONTENT_TOKEN"
+        required: true
+      CMS_MANAGEMENT_TOKEN:
+        description: "CMS_MANAGEMENT_TOKEN"
+        required: true
+      SHOPIFY_DOMAIN:
+        description: "SHOPIFY_DOMAIN"
+        required: true
+      SHOPIFY_ADMIN_API_TOKEN:
+        description: "SHOPIFY_ADMIN_API_TOKEN"
+        required: true
+      SHOPIFY_STOREFRONT_API_TOKEN:
+        description: "SHOPIFY_STOREFRONT_API_TOKEN"
+        required: true
+      SITE_URL:
+        description: "SITE_URL"
+        required: true
+jobs:
+  publish:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+#    - name: Installing Tree
+#      run: sudo apt-get install tree
+    #recommended way of installing yarn
+    - name: Create and populate .npmrc file
+      env:
+        NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+      run: |
+          touch .npmrc
+          echo //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN >> .npmrc
+      shell: bash
+    - name: yarn install
+      run: yarn install
+    - name: Netlify Deploy
+      run: netlify deploy --build --alias ${GITHUB_REF_NAME}
+
+      # uses: netlify/actions/cli@master
+      # with:
+      #   args: deploy --build --alias actions
+      env:
+        NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
+        NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
+        BACKPACK_API_SECRET_TOKEN: ${{secrets.BACKPACK_API_SECRET_TOKEN}}
+        BACKPACK_SITE_ID: ${{secrets.BACKPACK_SITE_ID}}
+        CMS_CONTENT_TOKEN: ${{secrets.CMS_CONTENT_TOKEN}}
+        CMS_MANAGEMENT_TOKEN: ${{secrets.CMS_MANAGEMENT_TOKEN}}
+        SHOPIFY_DOMAIN: ${{secrets.SHOPIFY_DOMAIN}}
+        SHOPIFY_ADMIN_API_TOKEN: ${{secrets.SHOPIFY_ADMIN_API_TOKEN}}
+        SHOPIFY_STOREFRONT_API_TOKEN: ${{secrets.SHOPIFY_STOREFRONT_API_TOKEN}}
+        SITE_URL: ${{secrets.SITE_URL}}
+#    - name: Showing Tree
+#      run: tree -L 4
+    #debugging with show tree
+
+  

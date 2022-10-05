@@ -1,6 +1,15 @@
-name: netlify-deploy
+name: netlify-prod-deploy
 on: 
   workflow_call:
+    inputs:
+      branch:
+        description: 'Branch name'
+        required: true
+        type: string
+      hash:
+        description: 'Shortened Commit hash'
+        required: true
+        type: string
     secrets:
       NETLIFY_SITE_ID:
         description: "NETLIFY_SITE_ID"
@@ -35,6 +44,7 @@ on:
       SITE_URL:
         description: "SITE_URL"
         required: true
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -52,10 +62,16 @@ jobs:
           touch .npmrc
           echo //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN >> .npmrc
       shell: bash
+    - name: Declare some variables
+      id: vars
+      shell: bash
+      run: |
+        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/preview-*})"
+        echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
     - name: yarn install
       run: yarn install
     - name: Netlify Deploy
-      run: netlify deploy --build --prod
+      run: netlify deploy --build --alias preview-${{steps.vars.outputs.branch}}-${{steps.vars.outputs.sha_short}}
 
       # uses: netlify/actions/cli@master
       # with:
