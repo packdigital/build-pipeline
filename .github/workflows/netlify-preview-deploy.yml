@@ -65,7 +65,7 @@ jobs:
     - name: yarn install
       run: yarn install
     - name: Netlify Deploy
-      run: netlify deploy --build --alias preview-${{inputs.branch}}-${{inputs.hash}}        
+      run: netlify deploy --build --alias preview-${{inputs.hash}}        
       # uses: netlify/actions/cli@master
       # with:
       #   args: deploy --build --alias actions
