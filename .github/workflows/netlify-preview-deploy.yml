@@ -1,4 +1,4 @@
-name: netlify-prod-deploy
+name: netlify-preview-deploy
 on: 
   workflow_call:
     inputs:
@@ -62,17 +62,10 @@ jobs:
           touch .npmrc
           echo //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN >> .npmrc
       shell: bash
-    - name: Declare some variables
-      id: vars
-      shell: bash
-      run: |
-        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/preview-*})"
-        echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
     - name: yarn install
       run: yarn install
     - name: Netlify Deploy
-      run: netlify deploy --build --alias preview-${{steps.vars.outputs.branch}}-${{steps.vars.outputs.sha_short}}
-
+      run: netlify deploy --build --alias preview-${{inputs.branch}}-${{inputs.hash}}        
       # uses: netlify/actions/cli@master
       # with:
       #   args: deploy --build --alias actions
