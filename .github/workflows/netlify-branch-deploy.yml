@@ -1,6 +1,11 @@
 name: netlify-branch-deploy
 on: 
   workflow_call:
+    inputs:
+      branch:
+        description: 'Branch name'
+        required: true
+        type: string
     secrets:
       NETLIFY_SITE_ID:
         description: "NETLIFY_SITE_ID"
@@ -55,7 +60,7 @@ jobs:
     - name: yarn install
       run: yarn install
     - name: Netlify Deploy
-      run: netlify deploy --build --alias ${GITHUB_REF_NAME}
+      run: netlify deploy --build --alias ${inputs.branch}
 
       # uses: netlify/actions/cli@master
       # with:
