@@ -2,10 +2,6 @@ name: netlify-preview-deploy
 on: 
   workflow_call:
     inputs:
-      branch:
-        description: 'Branch name'
-        required: true
-        type: string
       hash:
         description: 'Shortened Commit hash'
         required: true
