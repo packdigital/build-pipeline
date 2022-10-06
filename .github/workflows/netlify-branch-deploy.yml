@@ -60,7 +60,7 @@ jobs:
     - name: yarn install
       run: yarn install
     - name: Netlify Deploy
-      run: netlify deploy --build --alias ${inputs.branch}
+      run: netlify deploy --build --alias ${{inputs.branch}}
 
       # uses: netlify/actions/cli@master
       # with:
