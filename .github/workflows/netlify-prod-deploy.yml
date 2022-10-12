@@ -35,7 +35,9 @@ on:
       SITE_URL:
         description: "SITE_URL"
         required: true
-
+      PACK_API_URL:
+        description: "Direct staging deploys to call staging"
+        required: false
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -72,7 +74,7 @@ jobs:
         SHOPIFY_ADMIN_API_TOKEN: ${{secrets.SHOPIFY_ADMIN_API_TOKEN}}
         SHOPIFY_STOREFRONT_API_TOKEN: ${{secrets.SHOPIFY_STOREFRONT_API_TOKEN}}
         SITE_URL: ${{secrets.SITE_URL}}
-
+        PACK_API_URL: ${{secrets.PACK_API_URL}}
 #    - name: Showing Tree
 #      run: tree -L 4
     #debugging with show tree
