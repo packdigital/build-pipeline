@@ -35,9 +35,10 @@ on:
       SITE_URL:
         description: "SITE_URL"
         required: true
+
 jobs:
   publish:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
@@ -71,6 +72,7 @@ jobs:
         SHOPIFY_ADMIN_API_TOKEN: ${{secrets.SHOPIFY_ADMIN_API_TOKEN}}
         SHOPIFY_STOREFRONT_API_TOKEN: ${{secrets.SHOPIFY_STOREFRONT_API_TOKEN}}
         SITE_URL: ${{secrets.SITE_URL}}
+
 #    - name: Showing Tree
 #      run: tree -L 4
     #debugging with show tree
