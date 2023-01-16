@@ -80,7 +80,7 @@ jobs:
       run: netlify deploy --build --prod
       env:
         NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
-        NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
+        NETLIFY_AUTH_TOKEN: ''#${{secrets.NETLIFY_AUTH_TOKEN}}
         BACKPACK_API_SECRET_TOKEN: ${{secrets.BACKPACK_API_SECRET_TOKEN}}
         BACKPACK_SITE_ID: ${{secrets.BACKPACK_SITE_ID}}
         CMS_CONTENT_TOKEN: ${{secrets.CMS_CONTENT_TOKEN}}
