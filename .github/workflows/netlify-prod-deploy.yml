@@ -39,26 +39,26 @@ on:
         description: "Direct staging deploys to call staging"
         required: false
 jobs:
-  job01:
-    name: Job 01
-    runs-on: ubuntu-latest
-    outputs:
-      run_rest_jobs: ${{ steps.set_output.outputs.run_jobs }}
-    steps:
-      - name: Check the NETLIFY_AUTH_TOKEN are setting
-        id: set_output
-        env:
-          NETLIFY_AUTH_TOKEN: ''#${{secrets.NETLIFY_AUTH_TOKEN}}
-        run: |
-          codeChanges="only within certain files"
-          if [[ ! -z "$NETLIFY_AUTH_TOKEN" ]]; then
-            echo "::set-output name=run_jobs::true"
-          else
-            echo "::set-output name=run_jobs::false"
-          fi
+#  job01:
+#    name: Job 01
+#    runs-on: ubuntu-latest
+#    outputs:
+#      run_rest_jobs: ${{ steps.set_output.outputs.run_jobs }}
+#    steps:
+#      - name: Check the NETLIFY_AUTH_TOKEN are setting
+#        id: set_output
+#        env:
+#          NETLIFY_AUTH_TOKEN: ''#${{secrets.NETLIFY_AUTH_TOKEN}}
+#        run: |
+#          codeChanges="only within certain files"
+#          if [[ ! -z "$NETLIFY_AUTH_TOKEN" ]]; then
+#            echo "::set-output name=run_jobs::true"
+#          else
+#            echo "::set-output name=run_jobs::false"
+#          fi
   publish:
 #    if: needs.job01.outputs.run_rest_jobs == 'true'
-    if: ${{secrets.NETLIFY_AUTH_TOKEN}} != ''
+#    if: ${{secrets.NETLIFY_AUTH_TOKEN}} != ''
 #    runs-on: self-hosted
     runs-on: ubuntu-latest
     env:
@@ -76,6 +76,7 @@ jobs:
     - name: yarn install
       run: yarn install
     - name: Netlify Deploy
+      if: ${{env.NETLIFY_AUTH_TOKEN}} != ''
       run: netlify deploy --build --prod
       env:
         NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
