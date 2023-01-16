@@ -1,5 +1,5 @@
 name: netlify-preview-deploy
-on: 
+on:
   workflow_call:
     inputs:
       hash:
@@ -40,44 +40,42 @@ on:
       SITE_URL:
         description: "SITE_URL"
         required: true
-
+      PACK_API_URL:
+        description: "Direct staging deploys to call staging"
+        required: false
 jobs:
   publish:
-    runs-on: self-hosted
-
+#    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-#    - name: Installing Tree
-#      run: sudo apt-get install tree
-    #recommended way of installing yarn
-    - name: Create and populate .npmrc file
-      env:
-        NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
-      run: |
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Create and populate .npmrc file
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+        run: |
           touch .npmrc
           echo //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN >> .npmrc
-      shell: bash
-    - name: yarn install
-      run: yarn install
-    - name: Netlify Deploy
-      run: netlify deploy --build --alias preview-${{inputs.hash}}        
-      # uses: netlify/actions/cli@master
-      # with:
-      #   args: deploy --build --alias actions
-      env:
-        NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
-        NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
-        BACKPACK_API_SECRET_TOKEN: ${{secrets.BACKPACK_API_SECRET_TOKEN}}
-        BACKPACK_SITE_ID: ${{secrets.BACKPACK_SITE_ID}}
-        CMS_CONTENT_TOKEN: ${{secrets.CMS_CONTENT_TOKEN}}
-        CMS_MANAGEMENT_TOKEN: ${{secrets.CMS_MANAGEMENT_TOKEN}}
-        SHOPIFY_DOMAIN: ${{secrets.SHOPIFY_DOMAIN}}
-        SHOPIFY_ADMIN_API_TOKEN: ${{secrets.SHOPIFY_ADMIN_API_TOKEN}}
-        SHOPIFY_STOREFRONT_API_TOKEN: ${{secrets.SHOPIFY_STOREFRONT_API_TOKEN}}
-        SITE_URL: ${{secrets.SITE_URL}}
-#    - name: Showing Tree
-#      run: tree -L 4
-    #debugging with show tree
+        shell: bash
+      - name: yarn install
+        if: env.NETLIFY_AUTH_TOKEN != null
+        run: yarn install
+        env:
+          NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
+      - name: Netlify Deploy
+        if: env.NETLIFY_AUTH_TOKEN != null
+        run: netlify deploy --build --alias preview-${{inputs.hash}}
+        env:
+          NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
+          NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
+          BACKPACK_API_SECRET_TOKEN: ${{secrets.BACKPACK_API_SECRET_TOKEN}}
+          BACKPACK_SITE_ID: ${{secrets.BACKPACK_SITE_ID}}
+          CMS_CONTENT_TOKEN: ${{secrets.CMS_CONTENT_TOKEN}}
+          CMS_MANAGEMENT_TOKEN: ${{secrets.CMS_MANAGEMENT_TOKEN}}
+          SHOPIFY_DOMAIN: ${{secrets.SHOPIFY_DOMAIN}}
+          SHOPIFY_ADMIN_API_TOKEN: ${{secrets.SHOPIFY_ADMIN_API_TOKEN}}
+          SHOPIFY_STOREFRONT_API_TOKEN: ${{secrets.SHOPIFY_STOREFRONT_API_TOKEN}}
+          SITE_URL: ${{secrets.SITE_URL}}
+          PACK_API_URL: ${{secrets.PACK_API_URL}}
 
   
