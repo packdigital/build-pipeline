@@ -40,16 +40,15 @@ on:
       SITE_URL:
         description: "SITE_URL"
         required: true
+      PACK_API_URL:
+        description: "Direct staging deploys to call staging"
+        required: false
 jobs:
   publish:
     runs-on: self-hosted
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-#    - name: Installing Tree
-#      run: sudo apt-get install tree
-    #recommended way of installing yarn
     - name: Create and populate .npmrc file
       env:
         NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
@@ -61,10 +60,6 @@ jobs:
       run: yarn install
     - name: Netlify Deploy
       run: netlify deploy --build --alias ${{inputs.branch}}
-
-      # uses: netlify/actions/cli@master
-      # with:
-      #   args: deploy --build --alias actions
       env:
         NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
         NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
@@ -76,8 +71,6 @@ jobs:
         SHOPIFY_ADMIN_API_TOKEN: ${{secrets.SHOPIFY_ADMIN_API_TOKEN}}
         SHOPIFY_STOREFRONT_API_TOKEN: ${{secrets.SHOPIFY_STOREFRONT_API_TOKEN}}
         SITE_URL: ${{secrets.SITE_URL}}
-#    - name: Showing Tree
-#      run: tree -L 4
-    #debugging with show tree
+        PACK_API_URL: ${{secrets.PACK_API_URL}}
 
   
