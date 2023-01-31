@@ -49,8 +49,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
+      if: env.NETLIFY_AUTH_TOKEN != null
       uses: actions/checkout@v3
     - name: Create and populate .npmrc file
+      if: env.NETLIFY_AUTH_TOKEN != null
       env:
         NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
       run: |
@@ -64,7 +66,10 @@ jobs:
         NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
     - name: Netlify Deploy
       if: env.NETLIFY_AUTH_TOKEN != null
-      run: netlify deploy --build --alias ${{inputs.branch}}
+      run: |
+        [[ ! -z "$PACK_API_URL_CD" ]] && export PACK_API_URL=$PACK_API_URL_CD
+        
+        netlify deploy --build --alias ${{inputs.branch}}
       env:
         NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
         NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
@@ -76,6 +81,6 @@ jobs:
         SHOPIFY_ADMIN_API_TOKEN: ${{secrets.SHOPIFY_ADMIN_API_TOKEN}}
         SHOPIFY_STOREFRONT_API_TOKEN: ${{secrets.SHOPIFY_STOREFRONT_API_TOKEN}}
         SITE_URL: ${{secrets.SITE_URL}}
-        PACK_API_URL: ${{secrets.PACK_API_URL}}
+        PACK_API_URL_CD: ${{secrets.PACK_API_URL}}
 
   
