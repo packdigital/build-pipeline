@@ -64,6 +64,7 @@ jobs:
     - name: Netlify Deploy
       if: env.NETLIFY_AUTH_TOKEN != null
       run: |
+        echo $PACK_API_URL_CD
         [[ ! -z "$PACK_API_URL_CD" ]] && export PACK_API_URL=$PACK_API_URL_CD
         
         netlify deploy --build --prod
