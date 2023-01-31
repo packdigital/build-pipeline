@@ -47,6 +47,8 @@ jobs:
   publish:
 #    runs-on: self-hosted
     runs-on: ubuntu-latest
+    env:
+      NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
     steps:
       - name: Checkout code
         if: env.NETLIFY_AUTH_TOKEN != null
@@ -82,5 +84,3 @@ jobs:
           SHOPIFY_STOREFRONT_API_TOKEN: ${{secrets.SHOPIFY_STOREFRONT_API_TOKEN}}
           SITE_URL: ${{secrets.SITE_URL}}
           PACK_API_URL_CD: ${{secrets.PACK_API_URL}}
-
-  
