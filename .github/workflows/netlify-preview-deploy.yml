@@ -50,26 +50,26 @@ jobs:
     env:
       NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
     steps:
-      - name: Checkout code
-        if: env.NETLIFY_AUTH_TOKEN != null
+      - if: env.NETLIFY_AUTH_TOKEN != null
+        name: Checkout code
         uses: actions/checkout@v3
-      - name: Create and populate .npmrc file
-        if: env.NETLIFY_AUTH_TOKEN != null
+      - if: env.NETLIFY_AUTH_TOKEN != null
+        name: Create and populate .npmrc file
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
         run: |
           touch .npmrc
           echo //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN >> .npmrc
         shell: bash
-      - name: yarn install
-        if: env.NETLIFY_AUTH_TOKEN != null
+      - if: env.NETLIFY_AUTH_TOKEN != null
+        name: yarn install
         run: yarn install
-      - name: Netlify Deploy
-        if: env.NETLIFY_AUTH_TOKEN != null
+      - if: env.NETLIFY_AUTH_TOKEN != null
+        name: Netlify Deploy
         run: |
           [[ ! -z "$PACK_API_URL_CD" ]] && export PACK_API_URL=$PACK_API_URL_CD
           
-          netlify deploy --build --alias preview-${{inputs.hash}}
+          netlify deploy --build --alias preview-${{inputs.hash}} --message "Run id: ${{ github.run_id }}"
         env:
           NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
           NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
