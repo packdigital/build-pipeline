@@ -60,8 +60,8 @@ jobs:
           touch .npmrc
           echo //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN >> .npmrc
       shell: bash
-    - run: yarn version
-    - run: node version
+    - run: yarn --version
+    - run: node --version
     - if: env.NETLIFY_AUTH_TOKEN != null
       name: yarn install      
       run: yarn install
