@@ -72,7 +72,9 @@ jobs:
         [[ ! -z "${{ inputs.branch }}" ]] && MESSAGE="$MESSAGE | Branch: ${{ inputs.branch }}"
         [[ ! -z "${{ github.event.head_commit.message }}" ]] && MESSAGE="$MESSAGE | ${{ github.event.head_commit.message }}" || MESSAGE="$MESSAGE | Deploy to production"
         
-        netlify deploy --build --prod-if-unlocked --message $MESSAGE
+        echo $MESSAGE
+
+#        netlify deploy --build --prod-if-unlocked --message $MESSAGE
       env:
         NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
         NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
