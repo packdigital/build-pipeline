@@ -6,10 +6,6 @@ on:
         description: 'Branch name'
         required: false
         type: string
-      locked:
-        description: 'Deploy production locked'
-        required: false
-        type: boolean
     secrets:
       NETLIFY_SITE_ID:
         description: "NETLIFY_SITE_ID"
@@ -47,6 +43,9 @@ on:
       PACK_API_URL:
         description: "Direct staging deploys to call staging"
         required: false
+      AUTO_DEPLOY_NETLIFY_DISABLED:
+        description: "Deploy production locked"
+        required: false
 jobs:
   publish:
 #    runs-on: self-hosted
@@ -75,22 +74,29 @@ jobs:
     - if: env.NETLIFY_AUTH_TOKEN != null
       name: Netlify Deploy
       run: |
-        [[ ! -z "$PACK_API_URL_CD" ]] && export PACK_API_URL=$PACK_API_URL_CD
+        [[ -n "$PACK_API_URL_CD" ]] && export PACK_API_URL=$PACK_API_URL_CD
         
         MESSAGE="Run id: ${{ github.run_id }}"
-
-        if [[ ! -z "${{ inputs.branch }}" ]]
+        
+        if [[ -n "${{ inputs.branch }}" ]]
         then
+          CMD_DEPLOY="--alias ${{inputs.branch}}"
+          
           MESSAGE="$MESSAGE | Branch: ${{ inputs.branch }}"
           
-          [[ ! -z "${{ github.event.head_commit.message }}" ]] && MESSAGE="$MESSAGE | ${{ github.event.head_commit.message }}"
-          
-          netlify deploy --build --alias ${{inputs.branch}} --message "$MESSAGE"
+          [[ -n "${{ github.event.head_commit.message }}" ]] && MESSAGE="$MESSAGE | ${{ github.event.head_commit.message }}"
         else
-          [[ ! -z "${{ github.event.head_commit.message }}" ]] && MESSAGE="$MESSAGE | ${{ github.event.head_commit.message }}" || MESSAGE="$MESSAGE | Deploy to production"
-
-          netlify deploy --build --prod-if-unlocked --message "$MESSAGE"
+          if [[ -n "$AUTO_DEPLOY_NETLIFY_DISABLED" ]]
+          then
+            CMD_DEPLOY="--prod-if-unlocked"
+          else
+            CMD_DEPLOY="--prod"
+          fi
+          
+          [[ -n "${{ github.event.head_commit.message }}" ]] && MESSAGE="$MESSAGE | ${{ github.event.head_commit.message }}" || MESSAGE="$MESSAGE | Deploy to production"
         fi
+          
+        netlify deploy --build $CMD_DEPLOY --message "$MESSAGE"
       env:
         NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
         NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
