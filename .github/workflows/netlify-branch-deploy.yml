@@ -54,6 +54,12 @@ jobs:
       name: Checkout code
       uses: actions/checkout@v3
     - if: env.NETLIFY_AUTH_TOKEN != null
+      name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+        cache: 'yarn'
+    - if: env.NETLIFY_AUTH_TOKEN != null
       name: Create and populate .npmrc file
       env:
         NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}

@@ -69,8 +69,8 @@ jobs:
         [[ ! -z "$PACK_API_URL_CD" ]] && export PACK_API_URL=$PACK_API_URL_CD
         
         MESSAGE="Run id: ${{ github.run_id }}"
-        [[ ! -z ${{ inputs.branch }} ]] && MESSAGE="$MESSAGE | Branch: ${{ inputs.branch }}"
-        [[ ! -z ${{ github.event.head_commit.message }} ]] && MESSAGE="$MESSAGE | ${{ github.event.head_commit.message }}" || MESSAGE="$MESSAGE | Deploy to production"
+        [[ ! -z "${{ inputs.branch }}" ]] && MESSAGE="$MESSAGE | Branch: ${{ inputs.branch }}"
+        [[ ! -z "${{ github.event.head_commit.message }}" ]] && MESSAGE="$MESSAGE | ${{ github.event.head_commit.message }}" || MESSAGE="$MESSAGE | Deploy to production"
         
         netlify deploy --build --prod-if-unlocked --message $MESSAGE
       env:
