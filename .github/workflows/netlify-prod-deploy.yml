@@ -49,15 +49,19 @@ jobs:
       name: Checkout code
       uses: actions/checkout@v3
     - if: env.NETLIFY_AUTH_TOKEN != null
+      name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 16
+        node-version: '16'
+        cache: 'yarn'
     - if: env.NETLIFY_AUTH_TOKEN != null
       name: Create and populate .npmrc file
       run: |
           touch .npmrc
           echo //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN >> .npmrc
       shell: bash
+    - run: yarn version
+    - run: node version
     - if: env.NETLIFY_AUTH_TOKEN != null
       name: yarn install      
       run: yarn install
@@ -66,7 +70,7 @@ jobs:
       run: |
         [[ ! -z "$PACK_API_URL_CD" ]] && export PACK_API_URL=$PACK_API_URL_CD
         
-        netlify deploy --build --prod --message "Run id: ${{ github.run_id }}"
+        netlify deploy --build --prod-if-unlocked --message "Run id: ${{ github.run_id }}"
       env:
         NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
         NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
