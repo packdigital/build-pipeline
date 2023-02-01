@@ -1,6 +1,15 @@
 name: netlify-prod-deploy
 on: 
   workflow_call:
+    inputs:
+      branch:
+        description: 'Branch name'
+        required: false
+        type: string
+      locked:
+        description: 'Deploy production locked'
+        required: false
+        type: boolean
     secrets:
       NETLIFY_SITE_ID:
         description: "NETLIFY_SITE_ID"
@@ -69,12 +78,19 @@ jobs:
         [[ ! -z "$PACK_API_URL_CD" ]] && export PACK_API_URL=$PACK_API_URL_CD
         
         MESSAGE="Run id: ${{ github.run_id }}"
-        [[ ! -z "${{ inputs.branch }}" ]] && MESSAGE="$MESSAGE | Branch: ${{ inputs.branch }}"
-        [[ ! -z "${{ github.event.head_commit.message }}" ]] && MESSAGE="$MESSAGE | ${{ github.event.head_commit.message }}" || MESSAGE="$MESSAGE | Deploy to production"
-        
-        echo $MESSAGE
 
-        netlify deploy --build --prod-if-unlocked --message "$MESSAGE"
+        if [[ ! -z "${{ inputs.branch }}" ]]
+        then
+          MESSAGE="$MESSAGE | Branch: ${{ inputs.branch }}"
+          
+          [[ ! -z "${{ github.event.head_commit.message }}" ]] && MESSAGE="$MESSAGE | ${{ github.event.head_commit.message }}"
+          
+          netlify deploy --build --alias ${{inputs.branch}} --message "$MESSAGE"
+        else
+          [[ ! -z "${{ github.event.head_commit.message }}" ]] && MESSAGE="$MESSAGE | ${{ github.event.head_commit.message }}" || MESSAGE="$MESSAGE | Deploy to production"
+
+          netlify deploy --build --prod-if-unlocked --message "$MESSAGE"
+        fi
       env:
         NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
         NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
