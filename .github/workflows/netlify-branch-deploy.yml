@@ -69,7 +69,7 @@ jobs:
       run: |
         [[ ! -z "$PACK_API_URL_CD" ]] && export PACK_API_URL=$PACK_API_URL_CD
         
-        netlify deploy --build --alias ${{inputs.branch}} --message "Run id: ${{ github.run_id }} | Deploy branch: ${{inputs.branch}}"
+        netlify deploy --build --alias ${{inputs.branch}} --message "Run id: ${{ github.run_id }} | ${{ github.event.head_commit.message }} | Branch: ${{inputs.branch}}"
       env:
         NETLIFY_SITE_ID: ${{secrets.NETLIFY_SITE_ID}}
         NETLIFY_AUTH_TOKEN: ${{secrets.NETLIFY_AUTH_TOKEN}}
