@@ -95,6 +95,8 @@ jobs:
           
           [[ -n "${{ github.event.head_commit.message }}" ]] && MESSAGE="$MESSAGE | ${{ github.event.head_commit.message }}" || MESSAGE="$MESSAGE | Deploy to production"
         fi
+        
+        echo $CMD_DEPLOY
           
         netlify deploy --build $CMD_DEPLOY --message "$MESSAGE"
       env:
